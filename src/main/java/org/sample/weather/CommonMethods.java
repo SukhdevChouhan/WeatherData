@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CommonMethods {
     private static final Logger logger = Logger.getLogger(CommonMethods.class);
@@ -172,7 +171,6 @@ public class CommonMethods {
     }
 
     public void getDaysOfData(Object jsonData, Set<Integer> dayCounts) {
-        JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonData;
         JSONArray jsonArrayList = (JSONArray) jsonObject.get("list");
 
@@ -202,58 +200,9 @@ public class CommonMethods {
         return day;
     }
 
-    private int getHourOfDay(Calendar calendar) {
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        logger.info("day: " + hour);
-        return hour;
-    }
     public static Date parseDate(String date, String format) throws java.text.ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         return simpleDateFormat.parse(date);
-    }
-
-    public void getHoursOfDay(Object jsonData) {
-
-        JSONObject jsonObject = (JSONObject) jsonData;
-        JSONArray jsonArrayList = (JSONArray) jsonObject.get("list");
-
-        List lst = new ArrayList();
-        Map<Integer, List<Integer>> singleHourMap = new HashMap<>();
-        List lst1 = new ArrayList();
-        Calendar calendar = Calendar.getInstance();
-        int hr;
-        int day = 0;
-        int previousDay = 0;
-        try {
-            for (int iCount = 0; iCount < jsonArrayList.size(); iCount++) {
-                jsonObject = (JSONObject) jsonArrayList.get(iCount);
-                JSONObject jsonObjectList = jsonObject;
-
-                String dt_txt = (String) jsonObjectList.get("dt_txt");
-                logger.info("dt_txt: " + dt_txt);
-
-                Date date = parseDate(dt_txt, ApplicationConstants.DATE_FORMAT_LOCAL_DATETIME);
-                logger.info("date: " + date);
-                calendar.setTime(date);
-
-                logger.info("Lst..." + lst);
-
-                day = calendar.get(Calendar.DAY_OF_MONTH);
-                hr = calendar.get(Calendar.HOUR_OF_DAY);
-                if (iCount == 0) {
-                    previousDay = day - 1;
-                } else {
-                    break;
-                }
-                logger.info("previousDay: " + previousDay);
-                logger.info(hr);
-                lst1.add(hr);
-            }
-            singleHourMap.put(day, lst1);
-            logger.info("-----------");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public Set verifyAllHoursPresence(Map<Integer, List<Integer>> dayHourMap) {
@@ -308,7 +257,6 @@ public class CommonMethods {
             hour = calendar.get(Calendar.HOUR_OF_DAY);
             res.add(new WeatherApiResponse(day, hour));
         }
-        map.put(day, hour);
         for (WeatherApiResponse tempResp : res) {
             hashMap = filterMapData(tempResp.getDt_txt_day(), tempResp.getDt_txt_hour(), map);
         }
@@ -333,64 +281,6 @@ public class CommonMethods {
         } catch (ClassCastException cce) {
         }
         return map;
-    }
-
-
-    public void getTemperatureData(Object jsonData) {
-        JSONObject jsonObject = (JSONObject) jsonData;
-        JSONArray jsonArrayList = (JSONArray) jsonObject.get("list");
-        List<WeatherApiResponse> res = new ArrayList<>();
-
-        for (int iCount = 0; iCount < jsonArrayList.size(); iCount++) {
-            jsonObject = (JSONObject) jsonArrayList.get(iCount);
-            JSONObject jsonObjectList = jsonObject;
-
-            JSONObject jsonObjectMain = (JSONObject) jsonObjectList.get("main");
-            double list_main_temp = Double.parseDouble(String.valueOf(jsonObjectMain.get("temp")));
-            double list_main_temp_min = Double.parseDouble(String.valueOf(jsonObjectMain.get("temp_min")));
-            double list_main_temp_max = Double.parseDouble(String.valueOf(jsonObjectMain.get("temp_max")));
-
-            String dt_txt = (String) jsonObjectList.get("dt_txt");
-
-            res.add(new WeatherApiResponse(list_main_temp, list_main_temp_min, list_main_temp_max, dt_txt));
-        }
-        List<WeatherApiResponse> lst = new ArrayList();
-        WeatherApiResponse war1 = new WeatherApiResponse();
-        for (WeatherApiResponse tempResp : res) {
-            processTempData(tempResp.getList_main_temp(), tempResp.getList_main_temp_min(), tempResp.getList_main_temp_max(), tempResp.getDt_txt());
-        }
-    }
-
-    private List<WeatherApiResponse> processTempData(Object list_main_temp, Object list_main_temp_min, Object list_main_temp_max, String dt_txt) {
-        List<WeatherApiResponse> lst = new ArrayList();
-        WeatherApiResponse war = new WeatherApiResponse();
-        logger.info("list_main_temp: " + list_main_temp);
-        lst.add(instanceTypeCheck(list_main_temp, war));
-        logger.info("list_main_temp_min: " + list_main_temp_min);
-        lst.add(instanceTypeCheck(list_main_temp_min, war));
-        logger.info("list_main_temp_max: " + list_main_temp_max);
-        lst.add(instanceTypeCheck(list_main_temp_max, war));
-
-        return lst;
-    }
-
-    protected WeatherApiResponse instanceTypeCheck(Object obj, WeatherApiResponse war) {
-        if (obj instanceof Long) {
-            long list_main_temp = (long) obj;
-            war.setList_main_temp_long(list_main_temp);
-            return war;
-        } else if (obj instanceof Double) {
-            double list_main_temp = (double) obj;
-            war.setList_main_temp_double(list_main_temp);
-            return war;
-        } else if (obj instanceof Integer) {
-            int list_main_temp = (int) obj;
-            war.setList_main_temp_int(list_main_temp);
-            return war;
-        } else {
-            logger.error("check for classCastException");
-        }
-        return war;
     }
 
 }

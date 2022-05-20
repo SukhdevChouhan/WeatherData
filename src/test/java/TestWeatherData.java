@@ -45,7 +45,7 @@ public class TestWeatherData extends Login {
 
     @Test(description = "For all 4 days, the temp should not be less than temp_min and not more than temp_max", enabled = true, groups = "Temperature Test")
     public void TC03_For_all_4_days_the_temp_should_not_be_less_than_temp_min_and_not_more_than_temp_max() throws ParseException {
-//        commonMethods.getTemperatureData(jsonData);
+
         Assert.assertNotNull(weatherData, "Weather is not available.");
         Assert.assertTrue(weatherData.getList() != null && weatherData.getList().size() > 0, "No weather data available to read");
         boolean result = true;
