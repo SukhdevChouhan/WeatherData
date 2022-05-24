@@ -63,7 +63,7 @@ public class TestWeatherData extends Login {
         Assert.assertTrue(result, "The temperature has been fluctuated.");
     }
 
-    @Test(description = "If the weather id is 500, the description should be light rain", enabled = true, groups = "Temperature Test")
+    @Test(description = "If the weather id is 500, the description should be light rain", enabled = true)
     public void TC04_If_the_weather_id_is_500_the_description_should_be_light_rain() {
         Assert.assertNotNull(weatherData, "Weather is not available.");
         Assert.assertTrue(weatherData.getList() != null && weatherData.getList().size() > 0, "No weather data available to read");
@@ -76,7 +76,7 @@ public class TestWeatherData extends Login {
         }
     }
 
-    @Test(description = "If the weather id is 800, the description should be a clear sky", enabled = true, groups = "Temperature Test")
+    @Test(description = "If the weather id is 800, the description should be a clear sky", enabled = true)
     public void TC05_If_the_weather_id_is_800_the_description_should_be_a_clear_sky() {
         Assert.assertNotNull(weatherData, "Weather is not available.");
         Assert.assertTrue(weatherData.getList() != null && weatherData.getList().size() > 0, "No weather data available to read");
